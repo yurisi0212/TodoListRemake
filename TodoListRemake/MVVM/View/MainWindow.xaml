@@ -31,12 +31,12 @@
         
         <TextBlock 
             DockPanel.Dock="Bottom"
-            Text="Footer"/>
+            Text="{Binding FooterText}"/>
         
         <ListView 
             DockPanel.Dock="Left"
             MinWidth="180"
-            BorderThickness="1"
+            BorderThickness="0.5"
             SelectionMode="Single"
             ItemsSource="{Binding Playlist}"
             SelectedIndex="{Binding SelectedIndex}"

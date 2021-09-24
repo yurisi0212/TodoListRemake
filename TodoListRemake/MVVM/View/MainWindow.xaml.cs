@@ -9,8 +9,7 @@ namespace TodoListRemake.MVVM.View {
     public partial class MainWindow : MetroWindow {
         public MainWindow() {
             InitializeComponent();
-            MainWindowViewModel vm = new();
-            DataContext = vm;
+            DataContext = new MainWindowViewModel();
         }
     }
 }

@@ -10,9 +10,12 @@ namespace TodoListRemake.MVVM.ViewModel {
         public MainWindowViewModel() {
 
             AddScheduleCommand = new RelayCommand(() => {
-                MessageBox.Show("押せてる");
+                _ = MessageBox.Show("予定の追加");
             });
 
+            ShowCalendarCommand = new RelayCommand(() => {
+                _ = MessageBox.Show("カレンダーの表示");
+            });
         }
     }
 }

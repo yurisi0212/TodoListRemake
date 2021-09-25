@@ -78,33 +78,32 @@
             DockPanel.Dock="Bottom"
             Content="変更を保存"
             HorizontalAlignment="Right"
+            FontSize="11"
             Width="80"
             Margin="0,5,5,0"/>
 
-        <StackPanel
-            DockPanel.Dock="Top">
+        <StackPanel DockPanel.Dock="Top">
             <Button 
                 Content="{Binding CompleteButtonContent}"
                 Width="100"
                 HorizontalAlignment="Right"
+                FontSize="11"
                 Margin="0,5,5,5"/>
             
             <TextBox 
                 Text="{Binding TitleText}"
                 Margin="5,0,5,5"
-                FontSize="20"
-            />
+                FontSize="20"/>
 
             <Controls:DateTimePicker
                 SelectedDateTime="{Binding SelectedContentsDateTime}"
-                Margin="5,0,5,5"
-                />
+                Margin="5,0,5,5"/>
         </StackPanel>
+        
         <TextBox
             DockPanel.Dock="Top"
             Margin="5,0"
-            Text="{Binding ContentsText}"
-            />
+            Text="{Binding ContentsText}"/>
         
     </DockPanel>
 </Controls:MetroWindow>

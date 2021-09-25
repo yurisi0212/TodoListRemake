@@ -7,24 +7,64 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-        Title="TodoList" Height="450" Width="800">
-    
-        <Controls:MetroWindow.RightWindowCommands>
-            <Controls:WindowCommands>
+    Title="TodoList" Height="450" Width="800">
+
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
             <Button Command="{Binding AddScheduleCommand}" ToolTip="予定を追加">
-                    <icon:PackIconMaterial Kind="NotePlus"/>
-                </Button>
-                <Button Command="{Binding ShowCalendarCommand}" ToolTip="カレンダーを見る">
-                    <icon:PackIconMaterial Kind="Calendar"/>
-                </Button>
-            </Controls:WindowCommands>
-        </Controls:MetroWindow.RightWindowCommands>
+                <icon:PackIconMaterial Kind="NotePlus"/>
+            </Button>
+            <Button Command="{Binding ShowCalendarCommand}" ToolTip="カレンダーを見る">
+                <icon:PackIconMaterial Kind="Calendar"/>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout IsModal="True" Position="Top" IsOpen="{Binding ShowCalendarIsOpen}" TitleVisibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        Text="日付の選択"
+                        FontSize="18"/>
+
+                    <DatePicker
+                        x:Name="ViewDatePicker"
+                        Grid.Row="1" Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Margin="2"
+                        SelectedDate="{Binding ViewDate}"
+                        Controls:TextBoxHelper.ButtonCommandParameter="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+
+                    <Button
+                        Grid.Row="1" Grid.Column="1"
+                        Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        Margin="2"
+                        Command="{Binding ChangeDateCommand}"
+                        CommandParameter="{Binding Path=Text, ElementName=ViewDatePicker}">
+                        <icon:PackIconMaterial Kind="ArrowRightThick"/>
+                    </Button>
+                </Grid>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
 
     <DockPanel LastChildFill="True">
         <TextBlock 
             DockPanel.Dock="Bottom"
             Text="{Binding FooterText}"/>
-        
+
         <ListView 
             DockPanel.Dock="Left"
             MinWidth="180"
@@ -33,6 +73,13 @@
             ItemsSource="{Binding Playlist}"
             SelectedIndex="{Binding SelectedIndex}"
             ItemTemplate="{DynamicResource PlaylistItemTemplate}"/>
+            
+        <Button 
+            DockPanel.Dock="Bottom"
+            Content="変更を保存"
+            HorizontalAlignment="Right"
+            Width="80"
+            Margin="0,5,5,0"/>
 
         <StackPanel
             DockPanel.Dock="Top">
@@ -41,17 +88,23 @@
                 Width="100"
                 HorizontalAlignment="Right"
                 Margin="0,5,5,5"/>
+            
             <TextBox 
                 Text="{Binding TitleText}"
                 Margin="5,0,5,5"
                 FontSize="20"
             />
-            <!-- Todo : 日付の追加 -->
+
+            <Controls:DateTimePicker
+                SelectedDateTime="{Binding SelectedContentsDateTime}"
+                Margin="5,0,5,5"
+                />
         </StackPanel>
         <TextBox
             DockPanel.Dock="Top"
             Margin="5,0"
             Text="{Binding ContentsText}"
             />
+        
     </DockPanel>
 </Controls:MetroWindow>

@@ -18,6 +18,9 @@ namespace TodoListRemake.MVVM.ViewModel {
         public static readonly DependencyProperty FooterTextProperty =
             DependencyProperty.Register("FooterText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("ようこそ"));
 
+        public static readonly DependencyProperty CompleteButtonContentProperty =
+            DependencyProperty.Register("CompleteButtonContent", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("完了にする"));
+
         public static readonly DependencyProperty SelectedContentsDateTimeProperty =
             DependencyProperty.Register("SelectedContentsDateTime", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata(DateTime.Now));
 
@@ -42,6 +45,11 @@ namespace TodoListRemake.MVVM.ViewModel {
         public string FooterText {
             get => (string)GetValue(FooterTextProperty);
             set => SetValue(FooterTextProperty, value);
+        }
+
+        public string CompleteButtonContent {
+            get => (string)GetValue(CompleteButtonContentProperty);
+            set => SetValue(CompleteButtonContentProperty, value);
         }
 
         public DateTime SelectedContents {

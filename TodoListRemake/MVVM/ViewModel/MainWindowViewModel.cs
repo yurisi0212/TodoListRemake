@@ -2,9 +2,13 @@
 using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using MahApps.Metro.Controls;
+using TodoListRemake.MVVM.View;
 
 namespace TodoListRemake.MVVM.ViewModel {
     public class MainWindowViewModel : DependencyObject {
+
+        private MainWindow _window;
 
         public static readonly DependencyProperty ShowCalendarIsOpenProperty =
             DependencyProperty.Register("ShowCalendarIsOpen", typeof(bool), typeof(MainWindowViewModel), new UIPropertyMetadata(false));
@@ -66,9 +70,14 @@ namespace TodoListRemake.MVVM.ViewModel {
         public ICommand ShowCalendarCommand { get; }
         public ICommand ChangeDateCommand { get; }
 
-        public MainWindowViewModel() {
+        public MainWindowViewModel(MainWindow parentWindow) {
+
+            _window = parentWindow;
+
             AddScheduleCommand = new RelayCommand(() => {
-                _ = MessageBox.Show("予定の追加");
+                AddScheduleWindow window = new(_window);
+                window.Owner = _window;
+                window.ShowDialog();
             });
 
             ShowCalendarCommand = new RelayCommand(() => {
@@ -82,7 +91,7 @@ namespace TodoListRemake.MVVM.ViewModel {
         }
 
         private void ChangeDate(DateTime date) {
-            ViewDate = date;;
+            ViewDate = date;
             _ = MessageBox.Show(ViewDate.ToString());
         }
     }

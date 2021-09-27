@@ -11,7 +11,7 @@ namespace TodoListRemake.MVVM.ViewModel {
 
         private MainWindow _window;
 
-        private ScheduleDataBase _dataBase;
+        private ScheduleDataBase _database;
 
         public static readonly DependencyProperty ShowCalendarIsOpenProperty =
             DependencyProperty.Register("ShowCalendarIsOpen", typeof(bool), typeof(MainWindowViewModel), new UIPropertyMetadata(false));
@@ -77,10 +77,10 @@ namespace TodoListRemake.MVVM.ViewModel {
 
             _window = parentWindow;
 
-            _dataBase = new ScheduleDataBase();
+            _database = new ScheduleDataBase();
 
             AddScheduleCommand = new RelayCommand(() => {
-                AddScheduleWindow window = new(_window);
+                AddScheduleWindow window = new(_window,_database);
                 window.Owner = _window;
                 window.ShowDialog();
             });

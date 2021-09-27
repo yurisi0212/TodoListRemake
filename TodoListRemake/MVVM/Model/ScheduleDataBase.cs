@@ -6,7 +6,7 @@ using System.IO;
 namespace TodoListRemake.MVVM.Model {
     public class ScheduleDataBase {
 
-        private readonly string _path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\TodoListRemake";
+        private readonly string _path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\TodoListRemake\";
 
         private SQLiteConnectionStringBuilder _db;
 
@@ -18,7 +18,7 @@ namespace TodoListRemake.MVVM.Model {
         }
 
         private void SetupDataBase() {
-            _db = new SQLiteConnectionStringBuilder { DataSource = _path + @"\Schedule.db" };
+            _db = new SQLiteConnectionStringBuilder { DataSource = _path + "Schedule.db" };
             using var cn = new SQLiteConnection(_db.ToString());
             cn.Open();
             using var cmd = new SQLiteCommand(cn);
@@ -28,14 +28,19 @@ namespace TodoListRemake.MVVM.Model {
                     "title TEXT NOT NULL," +
                     "content TEXT NOT NULL," +
                     "date TEXT NOT NULL," +
-                    "complete INTEGER NOT NULL" +
+                    "complete INTEGER NOT NULL," +
                     "notification INTEGER NOT NULL" +
                  ")";
             cmd.ExecuteNonQuery();
         }
 
         private void AddListSchedules() {
-
+            using var cn = new SQLiteConnection(_db.ToString());
+            cn.Open();
+            using var cmd = new SQLiteCommand(cn);
+            cmd.CommandText = "SELECT * FROM todo";
+            using (SQLiteDataReader reader = cmd.ExecuteReader());
+            
         }
 
         public void AddSchedule(Schedule schedule) {
@@ -69,8 +74,8 @@ namespace TodoListRemake.MVVM.Model {
             _schedules.Add(newSchedule);
         }
 
-        public void GetScheduleByDate(DateTime date) {
-
+        public List<Schedule> GetScheduleByDate(DateTime date) {
+            return _schedules.FindAll(n => n.Date.ToShortDateString() == date.ToShortDateString());
         }
     }
 }

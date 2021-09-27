@@ -45,6 +45,16 @@ namespace TodoListRemake.MVVM.ViewModel {
             SaveButtonCommand = new RelayCommand(() => {
                 MessageBox.Show(TitleTextBox + "\n" + ScheduleDateTime.ToString() + "\n" + ContentTextBox);
             });
+
+            Schedule schedule = new(){
+                Id = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
+                Title = TitleTextBox,
+                Date = ScheduleDateTime,
+                Content = ContentTextBox,
+                Complete = false,
+                Notification = false
+            };
+            _database.AddSchedule(schedule);
         }
     }
 }

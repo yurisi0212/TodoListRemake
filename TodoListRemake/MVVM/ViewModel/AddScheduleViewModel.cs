@@ -42,6 +42,7 @@ namespace TodoListRemake.MVVM.ViewModel {
         public AddScheduleViewModel(MainWindow window,ScheduleDataBase database) {
             _window = window;
             _database = database;
+
             SaveButtonCommand = new RelayCommand(() => {
                 MessageBox.Show(TitleTextBox + "\n" + ScheduleDateTime.ToString() + "\n" + ContentTextBox);
             });
@@ -54,6 +55,7 @@ namespace TodoListRemake.MVVM.ViewModel {
                 Complete = false,
                 Notification = false
             };
+
             _database.AddSchedule(schedule);
         }
     }

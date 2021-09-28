@@ -24,7 +24,7 @@ namespace TodoListRemake.MVVM.Model {
             using var cmd = new SQLiteCommand(cn);
             cmd.CommandText =
                 "CREATE TABLE IF NOT EXISTS todo(" +
-                    "id INTEGER NOT NULL PRIMARY KEY," +
+                    "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     "title TEXT NOT NULL," +
                     "content TEXT NOT NULL," +
                     "date TEXT NOT NULL," +
@@ -47,9 +47,9 @@ namespace TodoListRemake.MVVM.Model {
             using var cn = new SQLiteConnection(_db.ToString());
             cn.Open();
             using var cmd = new SQLiteCommand(cn);
-            cmd.CommandText = "INSERT INTO todo(id, title, content, date, complete, notification) " +
+            cmd.CommandText = "INSERT INTO todo(title, content, date, complete, notification) " +
                 "VALUES(" +
-                $"{schedule.Id}, '{schedule.Title}', '{schedule.Content}', '{schedule.Date}', {(schedule.Complete ? 1 : 0)}, {(schedule.Notification ? 1 : 0)})";
+                $"'{schedule.Title}', '{schedule.Content}', '{schedule.Date}', {(schedule.Complete ? 1 : 0)}, {(schedule.Notification ? 1 : 0)})";
             cmd.ExecuteNonQuery();
             _schedules.Add(schedule);
         }

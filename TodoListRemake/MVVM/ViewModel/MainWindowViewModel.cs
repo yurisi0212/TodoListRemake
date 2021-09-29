@@ -98,9 +98,7 @@ namespace TodoListRemake.MVVM.ViewModel {
             _database = new ScheduleDataBase();
 
             AddScheduleCommand = new RelayCommand(() => {
-                AddScheduleWindow window = new(this, _database);
-                window.Owner = _window;
-                window.ShowDialog();
+                ShowAddWindow();
             });
 
             ShowCalendarCommand = new RelayCommand(() => {
@@ -113,28 +111,11 @@ namespace TodoListRemake.MVVM.ViewModel {
             });
 
             SaveCommand = new RelayCommand(() => {
-                var index = SelectedIndex;
-                var oldSchedule = TodoList[index].Schedule;
-                var newSchedule = new Schedule {
-                    Id = oldSchedule.Id,
-                    Title = TitleText,
-                    Content = ContentsText,
-                    Date = SelectedContents,
-                    Complete = oldSchedule.Complete,
-                    Notification = oldSchedule.Notification
-                };
-                _database.UpdateSchedule(oldSchedule,newSchedule);
-                FooterText = oldSchedule.Title + "をアップデートしました。";
-                SelectedIndex = ReloadListView(newSchedule);
+                Save();
             });
 
             DeleteCommand = new RelayCommand(() => {
-                _database.DeleteSchedule(TodoList[SelectedIndex].Schedule);
-                FooterText = TodoList[SelectedIndex].Schedule.Title + "を削除しました。";
-                TodoList.RemoveAt(SelectedIndex);
-                SelectedIndex = -1;
-                ReloadListView(null);
-                ResetForm();
+                Delete();
             });
         }
 
@@ -169,6 +150,39 @@ namespace TodoListRemake.MVVM.ViewModel {
                     result = wrap.Index;
             }
             return result;
+        }
+
+        private void ShowAddWindow() {
+            AddScheduleWindow window = new(this, _database);
+            window.Owner = _window;
+            window.ShowDialog();
+        }
+
+        private void Save() {
+            if (SelectedIndex == -1)
+                return;
+
+            var oldSchedule = TodoList[SelectedIndex].Schedule;
+            var newSchedule = new Schedule {
+                Id = oldSchedule.Id,
+                Title = TitleText,
+                Content = ContentsText,
+                Date = SelectedContents,
+                Complete = oldSchedule.Complete,
+                Notification = oldSchedule.Notification
+            };
+            _database.UpdateSchedule(oldSchedule, newSchedule);
+            FooterText = oldSchedule.Title + "をアップデートしました。";
+            SelectedIndex = ReloadListView(newSchedule);
+        }
+
+        private void Delete() {
+            _database.DeleteSchedule(TodoList[SelectedIndex].Schedule);
+            FooterText = TodoList[SelectedIndex].Schedule.Title + "を削除しました。";
+            TodoList.RemoveAt(SelectedIndex);
+            SelectedIndex = -1;
+            ReloadListView(null);
+            ResetForm();
         }
 
         private void ResetForm() {

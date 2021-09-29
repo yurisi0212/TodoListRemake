@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using TodoListRemake.MVVM.Model;
@@ -27,11 +29,21 @@ namespace TodoListRemake.MVVM.ViewModel {
         public static readonly DependencyProperty CompleteButtonContentProperty =
             DependencyProperty.Register("CompleteButtonContent", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("完了にする"));
 
+        public static readonly DependencyProperty SelectedIndexProperty =
+            DependencyProperty.Register("SelectedIndex", typeof(int), typeof(MainWindowViewModel), new UIPropertyMetadata(-1, OnSelectedIndexChanged));
+
         public static readonly DependencyProperty SelectedContentsDateTimeProperty =
             DependencyProperty.Register("SelectedContentsDateTime", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata(DateTime.Now));
 
         public static readonly DependencyProperty ViewDateProperty =
             DependencyProperty.Register("ViewDate", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata(DateTime.Now));
+
+        public ObservableCollection<ScheduleWrap> TodoList { get; }
+
+        private RelayCommand listView_Loaded;
+
+        public ICommand ListView_Loaded => listView_Loaded ??= new RelayCommand(PerformListView_Loaded);
+
 
         public bool ShowCalendarIsOpen {
             get => (bool)GetValue(ShowCalendarIsOpenProperty);
@@ -58,6 +70,11 @@ namespace TodoListRemake.MVVM.ViewModel {
             set => SetValue(CompleteButtonContentProperty, value);
         }
 
+        public int SelectedIndex {
+            get => (int)GetValue(SelectedIndexProperty);
+            set => SetValue(SelectedIndexProperty, value);
+        }
+
         public DateTime SelectedContents {
             get => (DateTime)GetValue(SelectedContentsDateTimeProperty);
             set => SetValue(SelectedContentsDateTimeProperty, value);
@@ -76,10 +93,12 @@ namespace TodoListRemake.MVVM.ViewModel {
 
             _window = parentWindow;
 
+            TodoList = new ObservableCollection<ScheduleWrap>();
+
             _database = new ScheduleDataBase();
 
             AddScheduleCommand = new RelayCommand(() => {
-                AddScheduleWindow window = new(_window,_database);
+                AddScheduleWindow window = new(this, _database);
                 window.Owner = _window;
                 window.ShowDialog();
             });
@@ -94,9 +113,29 @@ namespace TodoListRemake.MVVM.ViewModel {
             });
         }
 
+        private void PerformListView_Loaded() {
+            
+            ReloadListView();
+        }
+
         private void ChangeDate(DateTime date) {
             ViewDate = date;
             _ = MessageBox.Show(ViewDate.ToString());
+        }
+
+        public void ReloadListView() {
+            TodoList.Clear();
+            Debug.Print(SelectedContents.ToShortDateString());
+            foreach (Schedule data in _database.GetScheduleByDate(SelectedContents)) {
+                TodoList.Add(new ScheduleWrap {
+                    Index = TodoList.Count,
+                    Schedule = data
+                });
+            }
+        }
+
+        private static void OnSelectedIndexChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
+
         }
     }
 }

@@ -3,6 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:vm="clr-namespace:TodoListRemake.MVVM.ViewModel"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,6 +12,15 @@
     Title="TodoList"
     Height="450"
     Width="800">
+
+    <Controls:MetroWindow.Resources>
+        <DataTemplate x:Key="TodoListItemTemplate" DataType="{x:Type vm:ScheduleWrap}">
+            <Grid>
+                <TextBlock
+                    Text="{Binding Schedule.Title}"/>
+            </Grid>
+        </DataTemplate>
+    </Controls:MetroWindow.Resources>
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
@@ -72,10 +83,16 @@
             MinWidth="180"
             BorderThickness="0.5"
             SelectionMode="Single"
-            ItemsSource="{Binding Playlist}"
+            ItemsSource="{Binding TodoList}"
             SelectedIndex="{Binding SelectedIndex}"
-            ItemTemplate="{DynamicResource PlaylistItemTemplate}"/>
-            
+            ItemTemplate="{DynamicResource TodoListItemTemplate}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding ListView_Loaded}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ListView>
+
         <Button 
             DockPanel.Dock="Bottom"
             Content="変更を保存"

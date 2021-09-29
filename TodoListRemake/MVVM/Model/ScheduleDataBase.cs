@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 
 namespace TodoListRemake.MVVM.Model {
@@ -15,6 +16,7 @@ namespace TodoListRemake.MVVM.Model {
         public ScheduleDataBase() {
             Directory.CreateDirectory(_path);
             SetupDataBase();
+            AddListSchedules();
         }
 
         private void SetupDataBase() {
@@ -35,12 +37,23 @@ namespace TodoListRemake.MVVM.Model {
         }
 
         private void AddListSchedules() {
-            using var cn = new SQLiteConnection(_db.ToString());
+            using SQLiteConnection cn = new(_db.ToString());
             cn.Open();
-            using var cmd = new SQLiteCommand(cn);
+            using SQLiteCommand cmd = new(cn);
             cmd.CommandText = "SELECT * FROM todo";
-            using (SQLiteDataReader reader = cmd.ExecuteReader());
-            
+            using SQLiteDataReader reader = cmd.ExecuteReader();
+            while (reader.Read()) {
+                _schedules.Add(
+                    new Schedule {
+                        Id = int.Parse(reader["id"].ToString()),
+                        Title = (string)reader["title"],
+                        Content = (string)reader["content"],
+                        Date = DateTime.Parse((string)reader["date"]),
+                        Complete = int.Parse(reader["complete"].ToString()) == 1,
+                        Notification = int.Parse(reader["notification"].ToString()) == 1,
+                    }
+               );
+            }
         }
 
         public void AddSchedule(Schedule schedule) {

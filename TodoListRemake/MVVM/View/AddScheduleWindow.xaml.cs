@@ -7,7 +7,7 @@ namespace TodoListRemake.MVVM.View {
     /// AddScheduleWindow.xaml の相互作用ロジック
     /// </summary>
     public partial class AddScheduleWindow : MetroWindow {
-        public AddScheduleWindow(MainWindow window,ScheduleDataBase database) {
+        public AddScheduleWindow(MainWindowViewModel window,ScheduleDataBase database) {
             InitializeComponent();
             DataContext = new AddScheduleViewModel(window,database);
         }

@@ -3,12 +3,11 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using TodoListRemake.MVVM.Model;
-using TodoListRemake.MVVM.View;
 
 namespace TodoListRemake.MVVM.ViewModel {
     public class AddScheduleViewModel : DependencyObject {
 
-        private MainWindow _window;
+        private MainWindowViewModel _window;
 
         private ScheduleDataBase _database;
 
@@ -39,24 +38,24 @@ namespace TodoListRemake.MVVM.ViewModel {
 
         public ICommand SaveButtonCommand { get; }
 
-        public AddScheduleViewModel(MainWindow window,ScheduleDataBase database) {
+        public AddScheduleViewModel(MainWindowViewModel window,ScheduleDataBase database) {
             _window = window;
             _database = database;
 
             SaveButtonCommand = new RelayCommand(() => {
-                MessageBox.Show(TitleTextBox + "\n" + ScheduleDateTime.ToString() + "\n" + ContentTextBox);
+                Schedule schedule = new() {
+                    Id = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
+                    Title = TitleTextBox,
+                    Date = ScheduleDateTime,
+                    Content = ContentTextBox,
+                    Complete = false,
+                    Notification = false
+                };
+
+                _database.AddSchedule(schedule);
+                _window.FooterText = "登録しました。";
+                _window.ReloadListView();
             });
-
-            Schedule schedule = new(){
-                Id = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
-                Title = TitleTextBox,
-                Date = ScheduleDateTime,
-                Content = ContentTextBox,
-                Complete = false,
-                Notification = false
-            };
-
-            _database.AddSchedule(schedule);
         }
     }
 }

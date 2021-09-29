@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Command;
+using System;
+using System.Windows.Input;
 
 namespace TodoListRemake.MVVM.Model {
     public class Schedule {

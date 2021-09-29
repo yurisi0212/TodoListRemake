@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -159,7 +160,12 @@ namespace TodoListRemake.MVVM.ViewModel {
             SelectedIndex = ReloadListView(newSchedule);
         }
 
-        private void Delete() {
+        private async void Delete() {
+            var msgbox = await _window.ShowMessageAsync("TodoList", TodoList[SelectedIndex].Schedule.Title + "を削除してよろしいですか？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() {
+                AffirmativeButtonText = "はい",
+                NegativeButtonText = "いいえ"
+            });
+            if (msgbox == MessageDialogResult.Negative) return;
             _database.DeleteSchedule(TodoList[SelectedIndex].Schedule);
             FooterText = TodoList[SelectedIndex].Schedule.Title + "を削除しました。";
             TodoList.RemoveAt(SelectedIndex);

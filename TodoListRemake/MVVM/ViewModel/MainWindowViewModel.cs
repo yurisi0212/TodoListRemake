@@ -8,6 +8,7 @@ using TodoListRemake.MVVM.Model;
 using TodoListRemake.MVVM.View;
 
 namespace TodoListRemake.MVVM.ViewModel {
+
     public class MainWindowViewModel : DependencyObject {
 
         private MainWindow _window;
@@ -114,19 +115,18 @@ namespace TodoListRemake.MVVM.ViewModel {
         }
 
         private void PerformListView_Loaded() {
-            
             ReloadListView();
         }
 
         private void ChangeDate(DateTime date) {
             ViewDate = date;
-            _ = MessageBox.Show(ViewDate.ToString());
+            ReloadListView();
         }
 
         public void ReloadListView() {
             TodoList.Clear();
             Debug.Print(SelectedContents.ToShortDateString());
-            foreach (Schedule data in _database.GetScheduleByDate(SelectedContents)) {
+            foreach (Schedule data in _database.GetScheduleByDate(ViewDate)) {
                 TodoList.Add(new ScheduleWrap {
                     Index = TodoList.Count,
                     Schedule = data

@@ -16,7 +16,7 @@ namespace TodoListRemake.MVVM.Model {
         public ScheduleDataBase() {
             Directory.CreateDirectory(_path);
             SetupDataBase();
-            AddListSchedules();
+            AddSchedulesList();
         }
 
         private void SetupDataBase() {
@@ -36,7 +36,8 @@ namespace TodoListRemake.MVVM.Model {
             cmd.ExecuteNonQuery();
         }
 
-        private void AddListSchedules() {
+        private void AddSchedulesList() {
+            _schedules.Clear();
             using SQLiteConnection cn = new(_db.ToString());
             cn.Open();
             using SQLiteCommand cmd = new(cn);
@@ -65,6 +66,7 @@ namespace TodoListRemake.MVVM.Model {
                 $"'{schedule.Title}', '{schedule.Content}', '{schedule.Date}', {(schedule.Complete ? 1 : 0)}, {(schedule.Notification ? 1 : 0)})";
             cmd.ExecuteNonQuery();
             _schedules.Add(schedule);
+            AddSchedulesList();
         }
 
         public void DeleteSchedule(Schedule schedule) {
@@ -73,6 +75,7 @@ namespace TodoListRemake.MVVM.Model {
             using var cmd = new SQLiteCommand(cn);
             cmd.CommandText = "DELETE FROM todo WHERE id = " + schedule.Id;
             cmd.ExecuteNonQuery();
+            AddSchedulesList();
         }
 
         public void UpdateSchedule(Schedule oldSchedule, Schedule newSchedule) {
@@ -85,6 +88,7 @@ namespace TodoListRemake.MVVM.Model {
             cmd.ExecuteNonQuery();
             _schedules.Remove(oldSchedule);
             _schedules.Add(newSchedule);
+            AddSchedulesList();
         }
 
         public List<Schedule> GetScheduleByDate(DateTime date) {

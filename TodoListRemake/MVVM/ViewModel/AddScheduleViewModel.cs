@@ -3,9 +3,12 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using TodoListRemake.MVVM.Model;
+using TodoListRemake.MVVM.View;
 
 namespace TodoListRemake.MVVM.ViewModel {
     public class AddScheduleViewModel : DependencyObject {
+
+        private AddScheduleWindow _parent;
 
         private MainWindowViewModel _window;
 
@@ -38,9 +41,10 @@ namespace TodoListRemake.MVVM.ViewModel {
 
         public ICommand SaveButtonCommand { get; }
 
-        public AddScheduleViewModel(MainWindowViewModel window,ScheduleDataBase database) {
+        public AddScheduleViewModel(AddScheduleWindow parent, MainWindowViewModel window, ScheduleDataBase database) {
             _window = window;
             _database = database;
+            _parent = parent;
 
             SaveButtonCommand = new RelayCommand(() => {
                 Schedule schedule = new() {
@@ -53,8 +57,9 @@ namespace TodoListRemake.MVVM.ViewModel {
                 };
 
                 _database.AddSchedule(schedule);
-                _window.FooterText = "登録しました。";
+                _window.FooterText = schedule.Title + "を登録しました。";
                 _window.ReloadListView();
+                _parent.Close();
             });
         }
     }

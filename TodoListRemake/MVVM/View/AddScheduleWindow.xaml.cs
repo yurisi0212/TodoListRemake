@@ -9,7 +9,7 @@ namespace TodoListRemake.MVVM.View {
     public partial class AddScheduleWindow : MetroWindow {
         public AddScheduleWindow(MainWindowViewModel window,ScheduleDataBase database) {
             InitializeComponent();
-            DataContext = new AddScheduleViewModel(window,database);
+            DataContext = new AddScheduleViewModel(this,window,database);
         }
     }
 }

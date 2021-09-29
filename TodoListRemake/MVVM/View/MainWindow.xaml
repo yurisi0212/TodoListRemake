@@ -85,12 +85,28 @@
             SelectionMode="Single"
             ItemsSource="{Binding TodoList}"
             SelectedIndex="{Binding SelectedIndex}"
-            ItemTemplate="{DynamicResource TodoListItemTemplate}">
+            ItemTemplate="{DynamicResource TodoListItemTemplate}"
+            ScrollViewer.VerticalScrollBarVisibility="Visible">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
                     <i:InvokeCommandAction Command="{Binding ListView_Loaded}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListView}}" />
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                                <MenuItem
+                                    Header="削除"
+                                    Command="{Binding DeleteCommand}"
+                                    CommandParameter="{Binding PlacementTarget.Content, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
 
         <Button 
@@ -99,7 +115,8 @@
             HorizontalAlignment="Right"
             FontSize="11"
             Width="80"
-            Margin="0,5,5,0"/>
+            Margin="0,5,5,0"
+            Command="{Binding SaveCommand}"/>
 
         <StackPanel DockPanel.Dock="Top">
             <Button 

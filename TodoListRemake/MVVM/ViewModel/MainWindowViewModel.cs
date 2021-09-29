@@ -19,22 +19,22 @@ namespace TodoListRemake.MVVM.ViewModel {
             DependencyProperty.Register("ShowCalendarIsOpen", typeof(bool), typeof(MainWindowViewModel), new UIPropertyMetadata(false));
 
         public static readonly DependencyProperty TitleTextProperty = 
-            DependencyProperty.Register("TitleText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("タイトル"));
+            DependencyProperty.Register("TitleText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata(""));
 
         public static readonly DependencyProperty ContentsTextProperty =
-            DependencyProperty.Register("ContentsText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("コンテンツ"));
+            DependencyProperty.Register("ContentsText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata(""));
 
         public static readonly DependencyProperty FooterTextProperty =
-            DependencyProperty.Register("FooterText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("ようこそ"));
+            DependencyProperty.Register("FooterText", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata(""));
 
         public static readonly DependencyProperty CompleteButtonContentProperty =
-            DependencyProperty.Register("CompleteButtonContent", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata("完了にする"));
+            DependencyProperty.Register("CompleteButtonContent", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata(""));
 
         public static readonly DependencyProperty SelectedIndexProperty =
             DependencyProperty.Register("SelectedIndex", typeof(int), typeof(MainWindowViewModel), new UIPropertyMetadata(-1, OnSelectedIndexChanged));
 
         public static readonly DependencyProperty SelectedContentsDateTimeProperty =
-            DependencyProperty.Register("SelectedContentsDateTime", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata(DateTime.Now));
+            DependencyProperty.Register("SelectedContentsDateTime", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata());
 
         public static readonly DependencyProperty ViewDateProperty =
             DependencyProperty.Register("ViewDate", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata(DateTime.Now));
@@ -44,7 +44,6 @@ namespace TodoListRemake.MVVM.ViewModel {
         private RelayCommand listView_Loaded;
 
         public ICommand ListView_Loaded => listView_Loaded ??= new RelayCommand(PerformListView_Loaded);
-
 
         public bool ShowCalendarIsOpen {
             get => (bool)GetValue(ShowCalendarIsOpenProperty);
@@ -89,6 +88,8 @@ namespace TodoListRemake.MVVM.ViewModel {
         public ICommand AddScheduleCommand { get; }
         public ICommand ShowCalendarCommand { get; }
         public ICommand ChangeDateCommand { get; }
+        public ICommand SaveCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         public MainWindowViewModel(MainWindow parentWindow) {
 
@@ -112,6 +113,38 @@ namespace TodoListRemake.MVVM.ViewModel {
                 ShowCalendarIsOpen = false;
                 ChangeDate(DateTime.Parse(date));
             });
+
+            SaveCommand = new RelayCommand(() => {
+                var oldSchedule = TodoList[SelectedIndex].Schedule;
+                var newSchedule = new Schedule {
+                    Id = oldSchedule.Id,
+                    Title = TitleText,
+                    Content = ContentsText,
+                    Date = SelectedContents,
+                    Complete = oldSchedule.Complete,
+                    Notification = oldSchedule.Notification
+                };
+                _database.UpdateSchedule(oldSchedule,newSchedule);
+                FooterText = TodoList[SelectedIndex].Schedule.Title + "をアップデートしました。";
+                ReloadListView();
+            });
+
+            DeleteCommand = new RelayCommand(() => {
+                _database.DeleteSchedule(TodoList[SelectedIndex].Schedule);
+                FooterText = TodoList[SelectedIndex].Schedule.Title + "を削除しました。";
+                TodoList.RemoveAt(SelectedIndex);
+                SelectedIndex = -1;
+                ReloadListView();
+                ResetForm();
+            });
+        }
+
+        private static void OnSelectedIndexChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
+            MainWindowViewModel vm = (MainWindowViewModel)sender;
+            vm.TitleText = vm.TodoList[vm.SelectedIndex].Schedule.Title;
+            vm.ContentsText = vm.TodoList[vm.SelectedIndex].Schedule.Content;
+            vm.SelectedContents = vm.TodoList[vm.SelectedIndex].Schedule.Date;
+            vm.CompleteButtonContent = vm.TodoList[vm.SelectedIndex].Schedule.Complete ? "未完了に戻す" : "完了にする";
         }
 
         private void PerformListView_Loaded() {
@@ -133,8 +166,12 @@ namespace TodoListRemake.MVVM.ViewModel {
             }
         }
 
-        private static void OnSelectedIndexChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
-
+        private void ResetForm() {
+            TitleText = "";
+            ContentsText = "";
+            SelectedContents = DateTime.MinValue;
+            CompleteButtonContent = "";
         }
     }
 }
+ 

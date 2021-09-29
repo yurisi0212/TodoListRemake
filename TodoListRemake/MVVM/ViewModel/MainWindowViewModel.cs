@@ -125,7 +125,6 @@ namespace TodoListRemake.MVVM.ViewModel {
 
         public void ReloadListView() {
             TodoList.Clear();
-            Debug.Print(SelectedContents.ToShortDateString());
             foreach (Schedule data in _database.GetScheduleByDate(ViewDate)) {
                 TodoList.Add(new ScheduleWrap {
                     Index = TodoList.Count,

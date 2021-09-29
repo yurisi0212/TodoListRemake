@@ -16,6 +16,8 @@ namespace TodoListRemake.MVVM.ViewModel {
 
         private ScheduleDataBase _database;
 
+        public ObservableCollection<ScheduleWrap> TodoList { get; }
+
         public static readonly DependencyProperty ShowCalendarIsOpenProperty =
             DependencyProperty.Register("ShowCalendarIsOpen", typeof(bool), typeof(MainWindowViewModel), new UIPropertyMetadata(false));
 
@@ -39,12 +41,6 @@ namespace TodoListRemake.MVVM.ViewModel {
 
         public static readonly DependencyProperty ViewDateProperty =
             DependencyProperty.Register("ViewDate", typeof(DateTime), typeof(MainWindowViewModel), new UIPropertyMetadata(DateTime.Now));
-
-        public ObservableCollection<ScheduleWrap> TodoList { get; }
-
-        private RelayCommand listView_Loaded;
-
-        public ICommand ListView_Loaded => listView_Loaded ??= new RelayCommand(PerformListView_Loaded);
 
         public bool ShowCalendarIsOpen {
             get => (bool)GetValue(ShowCalendarIsOpenProperty);
@@ -86,6 +82,9 @@ namespace TodoListRemake.MVVM.ViewModel {
             set => SetValue(ViewDateProperty, value);
         }
 
+        private RelayCommand listView_Loaded;
+
+        public ICommand ListView_Loaded => listView_Loaded ??= new RelayCommand(PerformListView_Loaded);
         public ICommand AddScheduleCommand { get; }
         public ICommand ShowCalendarCommand { get; }
         public ICommand ChangeDateCommand { get; }

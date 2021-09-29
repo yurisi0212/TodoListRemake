@@ -11,9 +11,9 @@
     <DockPanel LastChildFill="True">
         <Button 
             DockPanel.Dock="Bottom"
-            Content="保存"
-            Width="70"
-            Height="25"
+            Content="予定を登録"
+            Width="80"
+            Height="30"
             HorizontalAlignment="Right"
             Margin="5,5,5,5"
             Command ="{Binding SaveButtonCommand}"/>

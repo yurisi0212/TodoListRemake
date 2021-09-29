@@ -92,7 +92,6 @@ namespace TodoListRemake.MVVM.ViewModel {
         public ICommand DeleteCommand { get; }
 
         public MainWindowViewModel(MainWindow parentWindow) {
-
             _window = parentWindow;
             TodoList = new ObservableCollection<ScheduleWrap>();
             _database = new ScheduleDataBase();
@@ -134,22 +133,7 @@ namespace TodoListRemake.MVVM.ViewModel {
         private void ChangeDate(DateTime date) {
             ViewDate = date;
             ReloadListView(null);
-        }
-
-        public int ReloadListView(Schedule? schedule) {
-            var result = -1;
-            TodoList.Clear();
-            foreach (Schedule data in _database.GetScheduleByDate(ViewDate)) {
-                var wrap = new ScheduleWrap {
-                    Index = TodoList.Count,
-                    Schedule = data
-                };
-                TodoList.Add(wrap);
-                if (schedule == null) continue;
-                if (wrap.Schedule.Id == schedule.Id)
-                    result = wrap.Index;
-            }
-            return result;
+            ResetForm();
         }
 
         private void ShowAddWindow() {
@@ -159,11 +143,10 @@ namespace TodoListRemake.MVVM.ViewModel {
         }
 
         private void Save() {
-            if (SelectedIndex == -1)
-                return;
+            if(SelectedIndex == -1) return;
 
-            var oldSchedule = TodoList[SelectedIndex].Schedule;
-            var newSchedule = new Schedule {
+            Schedule oldSchedule = TodoList[SelectedIndex].Schedule;
+            Schedule newSchedule = new() {
                 Id = oldSchedule.Id,
                 Title = TitleText,
                 Content = ContentsText,
@@ -183,6 +166,22 @@ namespace TodoListRemake.MVVM.ViewModel {
             SelectedIndex = -1;
             ReloadListView(null);
             ResetForm();
+        }
+
+        public int ReloadListView(Schedule? schedule) {
+            var result = -1;
+            TodoList.Clear();
+            foreach (Schedule data in _database.GetScheduleByDate(ViewDate)) {
+                var wrap = new ScheduleWrap {
+                    Index = TodoList.Count,
+                    Schedule = data
+                };
+                TodoList.Add(wrap);
+                if (schedule == null) continue;
+                if (wrap.Schedule.Id == schedule.Id)
+                    result = wrap.Index;
+            }
+            return result;
         }
 
         private void ResetForm() {

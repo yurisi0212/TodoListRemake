@@ -92,7 +92,9 @@ namespace TodoListRemake.MVVM.Model {
         }
 
         public List<Schedule> GetScheduleByDate(DateTime date) {
-            return _schedules.FindAll(n => n.Date.ToShortDateString() == date.ToShortDateString());
+            var schedules = _schedules.FindAll(n => n.Date.ToShortDateString() == date.ToShortDateString());
+            schedules.Sort((a, b) => a.Date.CompareTo(b.Date));
+            return schedules;
         }
     }
 }

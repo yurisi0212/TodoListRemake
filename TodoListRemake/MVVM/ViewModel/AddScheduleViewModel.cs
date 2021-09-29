@@ -58,7 +58,7 @@ namespace TodoListRemake.MVVM.ViewModel {
 
                 _database.AddSchedule(schedule);
                 _window.FooterText = schedule.Title + "を登録しました。";
-                _window.ReloadListView();
+                _window.ReloadListView(null);
                 _parent.Close();
             });
         }

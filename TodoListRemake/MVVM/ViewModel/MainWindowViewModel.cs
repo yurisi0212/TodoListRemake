@@ -94,9 +94,7 @@ namespace TodoListRemake.MVVM.ViewModel {
         public MainWindowViewModel(MainWindow parentWindow) {
 
             _window = parentWindow;
-
             TodoList = new ObservableCollection<ScheduleWrap>();
-
             _database = new ScheduleDataBase();
 
             AddScheduleCommand = new RelayCommand(() => {
@@ -115,7 +113,8 @@ namespace TodoListRemake.MVVM.ViewModel {
             });
 
             SaveCommand = new RelayCommand(() => {
-                var oldSchedule = TodoList[SelectedIndex].Schedule;
+                var index = SelectedIndex;
+                var oldSchedule = TodoList[index].Schedule;
                 var newSchedule = new Schedule {
                     Id = oldSchedule.Id,
                     Title = TitleText,
@@ -125,8 +124,8 @@ namespace TodoListRemake.MVVM.ViewModel {
                     Notification = oldSchedule.Notification
                 };
                 _database.UpdateSchedule(oldSchedule,newSchedule);
-                FooterText = TodoList[SelectedIndex].Schedule.Title + "をアップデートしました。";
-                ReloadListView();
+                FooterText = oldSchedule.Title + "をアップデートしました。";
+                SelectedIndex = ReloadListView(newSchedule);
             });
 
             DeleteCommand = new RelayCommand(() => {
@@ -134,7 +133,7 @@ namespace TodoListRemake.MVVM.ViewModel {
                 FooterText = TodoList[SelectedIndex].Schedule.Title + "を削除しました。";
                 TodoList.RemoveAt(SelectedIndex);
                 SelectedIndex = -1;
-                ReloadListView();
+                ReloadListView(null);
                 ResetForm();
             });
         }
@@ -148,22 +147,28 @@ namespace TodoListRemake.MVVM.ViewModel {
         }
 
         private void PerformListView_Loaded() {
-            ReloadListView();
+            ReloadListView(null);
         }
 
         private void ChangeDate(DateTime date) {
             ViewDate = date;
-            ReloadListView();
+            ReloadListView(null);
         }
 
-        public void ReloadListView() {
+        public int ReloadListView(Schedule? schedule) {
+            var result = -1;
             TodoList.Clear();
             foreach (Schedule data in _database.GetScheduleByDate(ViewDate)) {
-                TodoList.Add(new ScheduleWrap {
+                var wrap = new ScheduleWrap {
                     Index = TodoList.Count,
                     Schedule = data
-                });
+                };
+                TodoList.Add(wrap);
+                if (schedule == null) continue;
+                if (wrap.Schedule.Id == schedule.Id)
+                    result = wrap.Index;
             }
+            return result;
         }
 
         private void ResetForm() {
@@ -174,4 +179,3 @@ namespace TodoListRemake.MVVM.ViewModel {
         }
     }
 }
- 

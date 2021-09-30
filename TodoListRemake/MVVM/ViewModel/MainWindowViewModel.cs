@@ -2,7 +2,6 @@
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using TodoListRemake.MVVM.Model;
@@ -90,32 +89,27 @@ namespace TodoListRemake.MVVM.ViewModel {
         public ICommand ChangeDateCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
+        public ICommand CompleteCommand { get; }
 
         public MainWindowViewModel(MainWindow parentWindow) {
             _window = parentWindow;
             TodoList = new ObservableCollection<ScheduleWrap>();
             _database = new ScheduleDataBase();
 
-            AddScheduleCommand = new RelayCommand(() => {
-                ShowAddWindow();
-            });
+            AddScheduleCommand = new RelayCommand(() => ShowAddWindow());
 
-            ShowCalendarCommand = new RelayCommand(() => {
-                ShowCalendarIsOpen = true;
-            });
+            ShowCalendarCommand = new RelayCommand(() => ShowCalendarIsOpen = true);
 
             ChangeDateCommand = new RelayCommand<string>(date => {
                 ShowCalendarIsOpen = false;
                 ChangeDate(DateTime.Parse(date));
             });
 
-            SaveCommand = new RelayCommand(() => {
-                Save();
-            });
+            SaveCommand = new RelayCommand(() => Save());
 
-            DeleteCommand = new RelayCommand(() => {
-                Delete();
-            });
+            DeleteCommand = new RelayCommand(() => Delete());
+
+            CompleteCommand = new RelayCommand(() => Complete());
         }
 
         private static void OnSelectedIndexChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
@@ -173,7 +167,25 @@ namespace TodoListRemake.MVVM.ViewModel {
             ResetForm();
         }
 
-        public int ReloadListView(Schedule? schedule) {
+        private void Complete() {
+            if (SelectedIndex == -1) return;
+
+            Schedule oldSchedule = TodoList[SelectedIndex].Schedule;
+            Schedule newSchedule = new() {
+                Id = oldSchedule.Id,
+                Title = TitleText,
+                Content = ContentsText,
+                Date = SelectedContents,
+                Complete = !oldSchedule.Complete,
+                Notification = oldSchedule.Notification
+            };
+            _database.UpdateSchedule(oldSchedule, newSchedule);
+            FooterText = oldSchedule.Title + (newSchedule.Complete ? "を完了しました。" : "を未完了に戻しました。");
+            SelectedIndex = ReloadListView(newSchedule);
+            CompleteButtonContent = TodoList[SelectedIndex].Schedule.Complete ? "未完了に戻す" : "完了にする";
+        }
+
+        public int ReloadListView(Schedule schedule) {
             var result = -1;
             TodoList.Clear();
             foreach (Schedule data in _database.GetScheduleByDate(ViewDate)) {

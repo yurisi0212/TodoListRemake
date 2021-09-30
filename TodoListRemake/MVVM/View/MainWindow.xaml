@@ -143,6 +143,7 @@
         <StackPanel DockPanel.Dock="Top">
             <Button 
                 Content="{Binding CompleteButtonContent}"
+                Command = "{Binding CompleteCommand}"
                 Width="100"
                 HorizontalAlignment="Right"
                 FontSize="11"

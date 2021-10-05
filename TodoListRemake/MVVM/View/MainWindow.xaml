@@ -141,13 +141,26 @@
             Command="{Binding SaveCommand}"/>
 
         <StackPanel DockPanel.Dock="Top">
-            <Button 
+            <DockPanel>
+                <Button 
+                Content="{Binding NotificationButtonContent}"
+                Command = "{Binding NotificationCommand}"
+                Width="100"
+                HorizontalAlignment="Left"
+                FontSize="11"
+                Margin="5,5,5,5"/>
+                
+                <Button 
                 Content="{Binding CompleteButtonContent}"
                 Command = "{Binding CompleteCommand}"
                 Width="100"
                 HorizontalAlignment="Right"
                 FontSize="11"
                 Margin="0,5,5,5"/>
+
+
+            </DockPanel>
+
             
             <TextBox 
                 Text="{Binding TitleText}"

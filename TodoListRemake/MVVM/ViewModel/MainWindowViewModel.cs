@@ -32,6 +32,9 @@ namespace TodoListRemake.MVVM.ViewModel {
         public static readonly DependencyProperty CompleteButtonContentProperty =
             DependencyProperty.Register("CompleteButtonContent", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata(""));
 
+        public static readonly DependencyProperty NotificationButtonContentProperty =
+            DependencyProperty.Register("NotificationButtonContent", typeof(string), typeof(MainWindowViewModel), new UIPropertyMetadata(""));
+
         public static readonly DependencyProperty SelectedIndexProperty =
             DependencyProperty.Register("SelectedIndex", typeof(int), typeof(MainWindowViewModel), new UIPropertyMetadata(-1, OnSelectedIndexChanged));
 
@@ -66,6 +69,11 @@ namespace TodoListRemake.MVVM.ViewModel {
             set => SetValue(CompleteButtonContentProperty, value);
         }
 
+        public string NotificationButtonContent {
+            get => (string)GetValue(NotificationButtonContentProperty);
+            set => SetValue(NotificationButtonContentProperty, value);
+        }
+
         public int SelectedIndex {
             get => (int)GetValue(SelectedIndexProperty);
             set => SetValue(SelectedIndexProperty, value);
@@ -90,6 +98,7 @@ namespace TodoListRemake.MVVM.ViewModel {
         public ICommand DeleteCommand { get; }
         public ICommand CompleteCommand { get; }
         public ICommand ShowCalendarCommand { get; }
+        public ICommand NotificationCommand { get; }
 
         public MainWindowViewModel(MainWindow parentWindow) {
             _window = parentWindow;
